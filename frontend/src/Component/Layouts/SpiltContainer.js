@@ -12,7 +12,7 @@ import axios from "axios";
 import {
   getAllUsers,
   getDefaultVisiblePosts
-} from "../../ApiFetchers/getters/usersAxios";
+} from "../../ApiFetchers/getters/Axios";
 
 const SplitContainer = () => {
   const [authorData, setAuthorData] = useState([]);

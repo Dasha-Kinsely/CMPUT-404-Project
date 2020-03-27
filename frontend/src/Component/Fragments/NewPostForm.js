@@ -49,7 +49,7 @@ const visabilityOptions = [
     value: "myself"
   }
 ];
-const SignInForm = () => {
+const NewPostForm = () => {
   const [ready, setReady] = useState(false);
   const [dataSet, setDataSet] = useState({
     title: "",
@@ -180,4 +180,4 @@ const SignInForm = () => {
   );
 };
 
-export default SignInForm;
+export default NewPostForm;

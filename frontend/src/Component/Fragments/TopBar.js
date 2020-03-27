@@ -1,34 +1,74 @@
 import React, { Fragment, useState, useEffect } from "react";
+import { Redirect } from "react-router-dom";
 import {
   getMyFollowers,
   getMyFriendRequests,
   getMyFriends
-} from "../../ApiFetchers/getters/usersAxios";
-import AvatarSelector from "./AvatarSelector";
+} from "../../ApiFetchers/getters/Axios";
 import ImgUpload from "./ImgUpload";
-import NewPostForm from "../Fragments/NewPostForm";
-import { Label, Menu, Image, List, Button, Modal } from "semantic-ui-react";
+import NewPostForm from "./NewPostForm";
+import {
+  Label,
+  Menu,
+  Dropdown,
+  List,
+  Button,
+  Form,
+  Modal,
+  ListContent,
+  Select,
+  Segment
+} from "semantic-ui-react";
+
+var username = "dash";
+const avatarOptions = [
+  {
+    key: "myPosts",
+    text: "My Channel",
+    value: "myPosts",
+    icon: "address book outline"
+  },
+  {
+    key: "editProfile",
+    text: "Edit Profile",
+    value: "editProfile",
+    icon: "edit"
+  },
+  {
+    key: "gitActivities",
+    text: "Git Activities",
+    value: "gitActivities",
+    icon: "github"
+  },
+  {
+    key: "signOut",
+    text: "Sign Out",
+    value: "signOut",
+    icon: "delete"
+  }
+];
 
 const TopBar = () => {
   const [activeItem, setActiveItem] = useState("Followers");
-  const [visability, setVisability] = useState(false);
   const [followersLoading, setFollowersLoading] = useState(true);
   const [followers, setFollowers] = useState([]);
   const [friendRequestsLoading, setFriendRequestsLoading] = useState(true);
   const [friendRequests, setFriendRequests] = useState([]);
   const [friendsLoading, setFriendsLoading] = useState(true);
   const [friends, setFriends] = useState([]);
+  const [redir, setRedir] = useState(null);
   const handleChange = (e, value) => {
     e.preventDefault();
     setActiveItem(value);
     console.log(value);
   };
-  const handleImageClick = e => {
+  const handleSpecialRoutes = (e, { value }) => {
     e.preventDefault();
-    if (visability === true) {
-      setVisability(false);
-    } else {
-      setVisability(true);
+    setRedir(value);
+  };
+  const handleRedir = () => {
+    if (redir != null && redir.length > 2) {
+      return <Redirect to={redir} />;
     }
   };
   useEffect(() => {
@@ -58,6 +98,7 @@ const TopBar = () => {
 
   return (
     <Fragment>
+      {handleRedir()}
       <Menu>
         <Menu.Item>
           <a href="/">
@@ -92,8 +133,12 @@ const TopBar = () => {
               ) : (
                 <List relaxed>
                   {followers.map(item => (
-                    <List.Item>
+                    <List.Item key={item.id}>
                       <List.Header>{item.follower}</List.Header>
+                      <ListContent flaoted="right">
+                        <Button>Accept</Button>
+                        <Button>Reject</Button>
+                      </ListContent>
                     </List.Item>
                   ))}
                 </List>
@@ -123,10 +168,15 @@ const TopBar = () => {
                   </List.Content>
                 </List.Item>
               ) : (
-                <List relaxed>
+                <List relaxed divided>
                   {friends.map(item => (
-                    <List.Item>
-                      <List.Header>{item.id}</List.Header>
+                    <List.Item key={item.id}>
+                      <ListContent>
+                        <List.Header as="a">{item.id}</List.Header>
+                        <List.Content floated="right">
+                          <Button>Unfriend</Button>
+                        </List.Content>
+                      </ListContent>
                     </List.Item>
                   ))}
                 </List>
@@ -180,16 +230,26 @@ const TopBar = () => {
               <NewPostForm />
             </Modal.Content>
           </Modal>
-          <Button.Group>
-            <Button onClick={e => handleImageClick(e)}>
-              <Image
-                avatar
-                size="tiny"
-                src="https://firebasestorage.googleapis.com/v0/b/book-buddies-d4ba1.appspot.com/o/author.png?alt=media&token=84d333c4-f58c-4223-a454-d94a9d6a4b0f"
-              />
-              <AvatarSelector />
-            </Button>
-          </Button.Group>
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <Dropdown
+              text={username}
+              icon="user"
+              size="small"
+              floating
+              button
+              className="icon"
+            >
+              <Dropdown.Menu>
+                {avatarOptions.map(option => (
+                  <Dropdown.Item
+                    key={option.value}
+                    {...option}
+                    onClick={handleSpecialRoutes}
+                  />
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
         </Menu.Menu>
       </Menu>
     </Fragment>

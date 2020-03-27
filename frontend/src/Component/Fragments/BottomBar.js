@@ -22,7 +22,6 @@ export default () => (
           <List link inverted>
             <List.Item as="a">Link One</List.Item>
             <List.Item as="a">Link Two</List.Item>
-            <List.Item as="a">Link Three</List.Item>
           </List>
         </Grid.Column>
         <Grid.Column width={2}>
@@ -30,15 +29,13 @@ export default () => (
           <List link inverted>
             <List.Item as="a">Link One</List.Item>
             <List.Item as="a">Link Two</List.Item>
-            <List.Item as="a">Link Three</List.Item>
           </List>
         </Grid.Column>
         <Grid.Column width={2}>
-          <Header inverted as="h4" content="Promotions" />
+          <Header inverted as="h4" content="Trendings" />
           <List link inverted>
             <List.Item as="a">Link One</List.Item>
             <List.Item as="a">Link Two</List.Item>
-            <List.Item as="a">Link Three</List.Item>
           </List>
         </Grid.Column>
         <Grid.Column width={4}>
