@@ -6,8 +6,13 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+gunicorn = "*"
+psycopg2-binary = "*"
+django-heroku = "*"
 django = "==3.0.3"
 djangorestframework = "==3.11"
+django-rest-auth = "*"
+django-allauth = "*"
 django-cors-headers = "*"
 djangorestframework_simplejwt = "*"
 drf-yasg = "*"

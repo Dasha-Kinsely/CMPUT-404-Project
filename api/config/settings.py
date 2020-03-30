@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import django-heroku
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,9 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # libraries
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
     'corsheaders',
     'drf_yasg',
+    # custom app
     'users',
     'friends',
     'posts',
@@ -134,8 +142,19 @@ STATIC_URL = '/static/'
 #     )
 # }
 
+# django-rest-auth @& allauth settings
+SITE_ID = 1
+AUTH_USER_MODEL = "users.User"
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer'
+}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
 # django-cors-headers settings
 CORS_ORIGIN_ALLOW_ALL = True
 
+# DEFAULT_HOST = "http://127.0.0.1:8000/"
+DEFAULT_HOST = "https://cmput-404-project.herokuapp.com/"
+
+# Activate Django-Heroku.
 django_heroku.settings(locals())

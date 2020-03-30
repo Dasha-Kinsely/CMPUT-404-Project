@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd api
+python manage.py makemigrations
+python manage.py migrate

@@ -1,74 +1,57 @@
 
 from rest_framework import serializers
 # from rest_framework.validators import UniqueTogetherValidator
-from posts.models import Post, PostImage
+import json
+from django.db.models import Q, Count
+from posts.models import Post, Comment
+from users.serializers import AuthorInfoSerializer
 
-# code reference:
-# JPG; https://stackoverflow.com/questions/48756249/django-rest-uploading-and-serializing-multiple-images
-class PostImageSerializer(serializers.HyperlinkedModelSerializer):
+from config.settings import DEFAULT_HOST
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    author = AuthorInfoSerializer(many=False, read_only=True)
+
     class Meta:
-        model = PostImage
-        fields = ('post', 'image',)
+        model = Comment
+        fields = ('author', 'comment', 'contentType', 'published', 'id')
+
+class CommentEditSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('post', 'author', 'comment', 'contentType', 'published', 'id')
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
-    # associate Post with user
-    # see more: https://www.django-rest-framework.org/tutorial/4-authentication-and-permissions/#updating-our-serializer
-    author = serializers.ReadOnlyField(source='author.username')
-    # associate Post with PostImage
-    images = PostImageSerializer(source='postimage_set', many=True, read_only=True)
+    author = AuthorInfoSerializer(many=False, read_only=True)
+    source = serializers.SerializerMethodField()
+    origin = serializers.SerializerMethodField()
+    count = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    # comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'content', 'images', 'origin_post', 'text_type', 'add_time', 'mod_time', 'visibility', 'unlist')
+        fields = ('title', 'source', 'origin', 'description', 'contentType', 'content', 
+                  'author', 'categories', 'count', 'size', 'next', 'comments', 'published', 
+                  'id', 'visibility', 'visibleTo', 'unlisted')
+        # fields = ('title', 'source', 'origin', 'description', 'contentType', 'content', 
+        #           'author', 'categories', 'size', 'next', 'comments', 'published', 
+        #           'id', 'visibility', 'visibleTo', 'unlisted')
 
-    def create(self, validated_data):
-        images_data = self.context.get('view').request.FILES
-        post = Post.objects.create(**validated_data)
-        for image_data in images_data.values():
-            PostImage.objects.create(post=post, image=image_data)
-        return post
+    def get_source(self, obj):
+        if obj.source == "":
+            return f"{DEFAULT_HOST}posts/{obj.id}"
+        else:
+            return obj.source
 
-    def update(self, instance, validated_data):
-        instance.author = validated_data.get('author', instance.author)
-        instance.content = validated_data.get('content', instance.content)
-        instance.origin_post = validated_data.get('origin_post', instance.origin_post)
-        instance.text_type = validated_data.get('text_type', instance.text_type)
-        instance.add_time = validated_data.get('add_time', instance.add_time)
-        instance.mod_time = validated_data.get('mod_time', instance.mod_time)
-        instance.visibility = validated_data.get('visibility', instance.visibility)
-        instance.unlist = validated_data.get('unlist', instance.unlist)
-        instance.save()
+    def get_origin(self, obj):
+        if obj.origin == "":
+            return f"{DEFAULT_HOST}posts/{obj.id}"
+        else:
+            return obj.origin
 
-        return instance
-
-class PostReadOnlySerializer(serializers.HyperlinkedModelSerializer):
-    # associate Post with user
-    # see more: https://www.django-rest-framework.org/tutorial/4-authentication-and-permissions/#updating-our-serializer
-    author = serializers.ReadOnlyField(source='author.username')
-    # associate Post with PostImage
-    images = PostImageSerializer(source='postimage_set', many=True, read_only=True)
-
-    class Meta:
-        model = Post
-        fields = ('id', 'author', 'content', 'images', 'origin_post', 'text_type', 'add_time', 'mod_time', 'visibility', 'unlist')
-        read_only_fields = ('author', 'content', 'images', 'origin_post', 'text_type', 'visibility', 'unlist')
-
-    def create(self, validated_data):
-        images_data = self.context.get('view').request.FILES
-        post = Post.objects.create(**validated_data)
-        for image_data in images_data.values():
-            PostImage.objects.create(post=post, image=image_data)
-        return post
-
-    def update(self, instance, validated_data):
-        instance.author = validated_data.get('author', instance.author)
-        instance.content = validated_data.get('content', instance.content)
-        instance.origin_post = validated_data.get('origin_post', instance.origin_post)
-        instance.text_type = validated_data.get('text_type', instance.text_type)
-        instance.add_time = validated_data.get('add_time', instance.add_time)
-        instance.mod_time = validated_data.get('mod_time', instance.mod_time)
-        instance.visibility = validated_data.get('visibility', instance.visibility)
-        instance.unlist = validated_data.get('unlist', instance.unlist)
-        instance.save()
-
-        return instance
+    def get_count(self, obj):
+        return Comment.objects.filter(Q(post=obj.id)).count()
+    
+    def get_comments(self, obj):
+        queryset = Comment.objects.filter(Q(post=obj.id))
+        return CommentSerializer(queryset, many=True).data

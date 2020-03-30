@@ -1,31 +1,47 @@
 from django.db import models
 
 # Create your models here.
+import uuid
 from django.utils import timezone
-from django.contrib.auth.models import User
+from users.models import User
 
-VISIBILITY_CHOICES = [(1, "public"), 
-                      (2, "private"),
-                      (3, "friends"), 
-                      (4, "friends and friends of friends"), 
-                      (5, "another author"), 
-                      (6, "friends on the same host"), ]
-TEXT_TYPE_CHOICES = [(1, "plaintext"),
-                     (2, "markdown"),]
+from config.settings import DEFAULT_HOST
+
+VISIBILITY_CHOICES = [("PUBLIC", "PUBLIC"), 
+                      ("FOAF", "FOAF"),
+                      ("FRIENDS", "FRIENDS"), 
+                      ("PRIVATE", "PRIVATE"), 
+                      ("SERVERONLY", "SERVERONLY"), ]
+TEXT_TYPE_CHOICES = [("text/plain", "text/plain"),
+                     ("text/markdown", "text/markdown"),
+                     ("application/base64", "application/base64"),
+                     ("image/png;base64", "image/png;base64"),
+                     ("image/jpeg;base64", "image/jpeg;base64"),]
 
 class Post(models.Model):
-    # id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete = models.CASCADE, default=1, related_name="post_author")
+    title = models.CharField(blank=False, max_length=200)
+    source = models.URLField(null=False, blank=True)
+    origin = models.URLField(null=False, blank=True)
+    description = models.TextField(blank=True)
+    contentType = models.TextField(choices=TEXT_TYPE_CHOICES, default='text/plain')
     content = models.TextField(blank=True, max_length=2000)
-    origin_post = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null=True)      # link of the commented post
-    text_type = models.IntegerField(choices=TEXT_TYPE_CHOICES, default='1')
-    add_time = models.DateTimeField(auto_now_add = True)        # time of the post created
-    mod_time = models.DateTimeField(auto_now = True)            # time of the post modified
-    visibility = models.IntegerField(choices=VISIBILITY_CHOICES, default='1')
-    another_author = models.ForeignKey(User, on_delete = models.CASCADE, blank=True, null=True, related_name="another_author")
-    unlist = models.BooleanField(default=False)
+    author = models.ForeignKey(User, on_delete = models.CASCADE, related_name="post_author")
+    categories = models.TextField(default="[]")
+    # count = models.IntegerField(default=0)
+    size = models.IntegerField(default=50)
+    next = models.URLField(null=False, blank=True)
+    # comments = models.TextField(default="[]")       #
+    published = models.DateTimeField(auto_now_add = True)            # time of the post created
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    visibility = models.TextField(choices=VISIBILITY_CHOICES, default='PUBLIC')
+    visibleTo = models.TextField(default="[]")
+    unlisted = models.BooleanField(default=False)
 
-class PostImage(models.Model):
-    post = models.ForeignKey(Post, on_delete = models.CASCADE, default=1)
-    # order = models.IntegerField(blank=False, null=False)
-    image = models.ImageField(upload_to='uploads', blank=False)
+class Comment(models.Model):
+    # post = models.ForeignKey(Post, on_delete = models.CASCADE, default=1, related_name="post_comment")
+    post = models.TextField(blank=False, default=1)
+    author = author = models.ForeignKey(User, on_delete = models.CASCADE, related_name="comment_author")
+    comment = models.TextField(blank=True, max_length=2000)
+    contentType = models.TextField(choices=TEXT_TYPE_CHOICES, default='text/plain')
+    published = models.DateTimeField(auto_now_add = True)            # time of the comment created
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

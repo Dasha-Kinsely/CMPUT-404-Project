@@ -1,0 +1,45 @@
+POST /friendrequest/
+{
+    "query":"friendrequest",
+    "author": {
+        "id":"https://cmput-404-project.herokuapp.com/author/6fbb1f1f-d793-4e46-af23-776516890033",
+        "host":"https://cmput-404-project.herokuapp.com/",
+        "displayName":"admin",
+        "url":"https://cmput-404-project.herokuapp.com/author/6fbb1f1f-d793-4e46-af23-776516890033"
+    },
+    "friend": {
+        "id":"https://cmput-404-project.herokuapp.com/author/77532446-1d81-4e78-a5f2-9a79b295c776",
+        "host":"https://cmput-404-project.herokuapp.com/",
+        "displayName":"user1",
+        "url":"https://cmput-404-project.herokuapp.com/author/77532446-1d81-4e78-a5f2-9a79b295c776"
+
+    }
+}
+
+{
+    "query":"friendrequest",
+    "author": {
+        "id":"https://cmput-404-project.herokuapp.com/author/898d4703-f173-4a40-a634-890c74a621c5",
+        "host":"https://cmput-404-project.herokuapp.com/",
+        "displayName":"user2",
+        "url":"https://cmput-404-project.herokuapp.com/author/898d4703-f173-4a40-a634-890c74a621c5"
+    },
+    "friend": {
+        "id":"https://cmput-404-project.herokuapp.com/author/77532446-1d81-4e78-a5f2-9a79b295c776",
+        "host":"https://cmput-404-project.herokuapp.com/",
+        "displayName":"user1",
+        "url":"https://cmput-404-project.herokuapp.com/author/77532446-1d81-4e78-a5f2-9a79b295c776"
+
+    }
+}
+
+POST /author/{user_id}/friends/
+{
+	"query":"friends",
+	"author":"https://cmput-404-project.herokuapp.com/author/77532446-1d81-4e78-a5f2-9a79b295c776",
+	"authors": [
+	    "https://cmput-404-project.herokuapp.com/author/77532446-1d81-4e78-a5f2-9a79b295c776",
+		"https://cmput-404-project.herokuapp.com/author/898d4703-f173-4a40-a634-890c74a621c5",
+		"https://cmput-404-project.herokuapp.com/author/6fbb1f1f-d793-4e46-af23-776516890033"
+  	]
+}

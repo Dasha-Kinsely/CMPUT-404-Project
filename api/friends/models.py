@@ -1,6 +1,8 @@
 from django.db import models
+import uuid
 from django.utils import timezone
-from django.contrib.auth.models import User
+from users.models import User
+from config.settings import DEFAULT_HOST
 
 class Friend(models.Model):
     '''
@@ -12,8 +14,16 @@ class Friend(models.Model):
 
     For creating Friend instance and marking mutual field of the followee, it will be finished automatically by the view.
     '''
-    # id = models.AutoField(primary_key=True)
-    followee = models.ForeignKey(User, on_delete = models.CASCADE, default=1, related_name='followee')
-    follower = models.ForeignKey(User, on_delete = models.CASCADE, default=1, related_name='follower')
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # followee = models.ForeignKey(User, on_delete = models.CASCADE, related_name='friend_followee')
+    # follower = models.ForeignKey(User, on_delete = models.CASCADE, related_name='friend_follower')
+    followee_id = models.TextField(blank=False, default=1)     # followee's uuid
+    followee_host = models.URLField(default=DEFAULT_HOST)
+    followee_name = models.CharField(max_length=100, default="user")
+    followee_url = models.URLField(default=DEFAULT_HOST)
+    follower_id = models.TextField(blank=False, default=1)     # follower's uuid
+    follower_host = models.URLField(default=DEFAULT_HOST)
+    follower_name = models.CharField(max_length=100, default="user")
+    follower_url = models.URLField(default=DEFAULT_HOST)
     mutual = models.BooleanField(default=False)             # wheater the followee followed back
     not_read = models.BooleanField(default=True)            # wheater the followee read this request
