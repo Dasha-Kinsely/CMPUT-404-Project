@@ -10,7 +10,8 @@ import {
   Checkbox,
   Container
 } from "semantic-ui-react";
-//import { userSignin } from "../../ApiFetchers/posters/Axios";
+import { userSignin } from "../../ApiFetchers/posters/Axios";
+import { getCurrentUsers } from "../../ApiFetchers/getters/Axios";
 
 const SignInForm = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -29,7 +30,7 @@ const SignInForm = () => {
   const handleSubmit = e => {
     e.preventDefault();
     let { email, username, password } = auth;
-    console.log(`${email}//${username}//${password}`);
+    userSignin(email, username, password);
   };
   return (
     <Container>

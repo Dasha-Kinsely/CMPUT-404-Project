@@ -6,8 +6,13 @@ import {
   idVisiblePosts,
   myFriends,
   myFollowers,
-  myFriendRequests
+  myFriendRequests,
+  currentUser
 } from "../globalurl";
+
+export const getCurrentUsers = () => {
+  return axios.get(currentUser());
+};
 
 export const getAllUsers = () => {
   console.log(axios.get(allUsers()));

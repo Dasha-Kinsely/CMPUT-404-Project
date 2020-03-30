@@ -168,7 +168,7 @@ const TopBar = () => {
                   </List.Content>
                 </List.Item>
               ) : (
-                <List relaxed divided>
+                <List relaxed>
                   {friends.map(item => (
                     <List.Item key={item.id}>
                       <ListContent>

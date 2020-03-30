@@ -1,8 +1,12 @@
 from rest_framework import serializers, exceptions
 from rest_auth.serializers import LoginSerializer
+from rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import UserDetailsSerializer
 
-from users.models import User
+from allauth.account import adapter, utils
+
+from config import settings
+from users.models import User, Host
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
@@ -47,3 +51,35 @@ class AuthorInfoSerializer(serializers.ModelSerializer):
 
     def get_displayName(self,obj):
         return obj.username
+
+class AuthorRegisterSerializer(RegisterSerializer):
+
+    def return_validated_data(self, arg1, arg2):
+        return self.validated_data.get(arg1, arg2)
+
+    def get_data(self):
+        return {
+            'username': self.return_validated_data('username', ''),
+            'password': self.return_validated_data('password', ''),
+            'email': self.return_validated_data('email', ''),
+            'github': self.return_validated_data('github', ''),
+            'userType': 'author',
+            'approved': False
+        }
+
+    def save_data(self, request):
+        author_adapter = adapter.get_adaptor()
+        new_author = author_adapter.new_user(request)
+
+        current_host = settings.DEFAULT_HOST
+        if Host.objects.filter(url=current_host):
+            author_host = Host.object.get(url=current_host)
+        else:
+            author_host = Host.object.create(url=current_host)
+        new_author.host = author_host
+
+        self.cleaned_data = self.get_data()
+        author_adapter.save_user(request, new_author, self)
+        utils.setup_user_email(request, new_author, self)
+
+        return new_author
