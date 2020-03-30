@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, List, Button, Icon, Image } from "semantic-ui-react";
+import {
+  Container,
+  Grid,
+  List,
+  Button,
+  Icon,
+  Image,
+  Modal
+} from "semantic-ui-react";
 import axios from "axios";
+import {
+  getAllUsers,
+  getDefaultVisiblePosts
+} from "../../ApiFetchers/getters/usersAxios";
 
 const SplitContainer = () => {
   const [authorData, setAuthorData] = useState([]);
@@ -14,7 +26,7 @@ const SplitContainer = () => {
       setAuthorError(false);
       setAuthorLoading(true);
       try {
-        const authorFetcher = await axios("http://localhost:8000/api/authors/"); //get data from api's url
+        const authorFetcher = await getAllUsers(); //get data from api's url
         setAuthorData(authorFetcher.data);
       } catch (error) {
         setAuthorError(true);
@@ -25,7 +37,7 @@ const SplitContainer = () => {
       setPostError(false);
       setPostLoading(true);
       try {
-        const postFetcher = await axios("http://localhost:8000/api/posts/");
+        const postFetcher = await getDefaultVisiblePosts();
         setPostData(postFetcher.data);
       } catch (error) {
         setPostError(true);
@@ -69,7 +81,7 @@ const SplitContainer = () => {
                       src="https://react.semantic-ui.com/images/avatar/small/rachel.png"
                     />
                     <List.Content>
-                      <List.Header>{item.displayName}</List.Header>
+                      <List.Header>{item.username}</List.Header>
                       <Button animated size="tiny">
                         <Button.Content visible>Follow</Button.Content>
                         <Button.Content hidden>
@@ -104,16 +116,24 @@ const SplitContainer = () => {
                 {postData.map(item => (
                   <List.Item key={item.id}>
                     <List.Content>
-                      <List.Header
-                        as="a"
-                        onClick={e => {
-                          openContent(e, item.content);
-                        }}
+                      <Modal
+                        trigger={
+                          <List.Header
+                            as="a"
+                            onClick={e => {
+                              openContent(e, item.content);
+                            }}
+                          >
+                            {item.id}
+                          </List.Header>
+                        }
                       >
-                        {item.title}
-                      </List.Header>
-                      <List.Description>{item.description}</List.Description>
-                      <List.Description>{item.published}</List.Description>
+                        <Modal.Content>
+                          <Modal.Description>{item.content}</Modal.Description>
+                        </Modal.Content>
+                      </Modal>
+                      <List.Description>{item.author}</List.Description>
+                      <List.Description>{item.mod_time}</List.Description>
                     </List.Content>
                   </List.Item>
                 ))}

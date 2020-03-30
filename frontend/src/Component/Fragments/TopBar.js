@@ -1,12 +1,23 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import {
+  getMyFollowers,
+  getMyFriendRequests,
+  getMyFriends
+} from "../../ApiFetchers/getters/usersAxios";
 import AvatarSelector from "./AvatarSelector";
 import ImgUpload from "./ImgUpload";
 import NewPostForm from "../Fragments/NewPostForm";
-import { Label, Menu, Image, Button, Modal } from "semantic-ui-react";
+import { Label, Menu, Image, List, Button, Modal } from "semantic-ui-react";
 
 const TopBar = () => {
   const [activeItem, setActiveItem] = useState("Followers");
   const [visability, setVisability] = useState(false);
+  const [followersLoading, setFollowersLoading] = useState(true);
+  const [followers, setFollowers] = useState([]);
+  const [friendRequestsLoading, setFriendRequestsLoading] = useState(true);
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [friendsLoading, setFriendsLoading] = useState(true);
+  const [friends, setFriends] = useState([]);
   const handleChange = (e, value) => {
     e.preventDefault();
     setActiveItem(value);
@@ -20,6 +31,31 @@ const TopBar = () => {
       setVisability(true);
     }
   };
+  useEffect(() => {
+    const followersList = async () => {
+      setFollowersLoading(true);
+      try {
+        let followersFetcher = await getMyFollowers(1); //get data from api's url
+        setFollowers(followersFetcher.data);
+      } catch (error) {
+        console.log(error);
+      }
+      setFollowersLoading(false);
+    }; //fetch followers
+    const friendsList = async () => {
+      setFriendsLoading(true);
+      try {
+        let friendsFetcher = await getMyFriends(1); //get data from api's url
+        setFriends(friendsFetcher.data);
+      } catch (error) {
+        console.log(error);
+      }
+      setFriendsLoading(false);
+    }; //fetch friends
+    followersList();
+    friendsList();
+  }, []);
+
   return (
     <Fragment>
       <Menu>
@@ -47,7 +83,21 @@ const TopBar = () => {
           <Modal.Header>Current Followers</Modal.Header>
           <Modal.Content>
             <Modal.Description>
-              <p>Followers</p>
+              {followersLoading ? (
+                <List.Item>
+                  <List.Content>
+                    <List.Description>Loading ...</List.Description>
+                  </List.Content>
+                </List.Item>
+              ) : (
+                <List relaxed>
+                  {followers.map(item => (
+                    <List.Item>
+                      <List.Header>{item.follower}</List.Header>
+                    </List.Item>
+                  ))}
+                </List>
+              )}
             </Modal.Description>
           </Modal.Content>
         </Modal>
@@ -66,7 +116,21 @@ const TopBar = () => {
           <Modal.Header>Current Friends</Modal.Header>
           <Modal.Content>
             <Modal.Description>
-              <p>Friends</p>
+              {friendsLoading ? (
+                <List.Item>
+                  <List.Content>
+                    <List.Description>Loading ...</List.Description>
+                  </List.Content>
+                </List.Item>
+              ) : (
+                <List relaxed>
+                  {friends.map(item => (
+                    <List.Item>
+                      <List.Header>{item.id}</List.Header>
+                    </List.Item>
+                  ))}
+                </List>
+              )}
             </Modal.Description>
           </Modal.Content>
         </Modal>
