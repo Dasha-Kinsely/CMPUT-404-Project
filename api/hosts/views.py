@@ -44,6 +44,7 @@ class HostViewSet(viewsets.ModelViewSet):
             "password": "passqwer"
         }
         The baseURL should be the common part for APIs, and end with "/".
+        Example: "https://cmput-404-project.herokuapp.com/api/"
 
     partial_update:
         Update one or more fields on a existing host.
