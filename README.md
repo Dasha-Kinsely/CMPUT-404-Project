@@ -9,6 +9,8 @@ Welcome to the git repository of Hindle's Wonderland. This is a repository of CM
 - React
 - AJAX
 - Git
+- Swagger
+- Redoc
 - Figma
 
 ## Online demo
@@ -94,12 +96,16 @@ The two default remote host our online demo connected with are `https://spongebo
 
 ### UI Mockup
 
-See the `UI_mockup.fig` under the root directory. This is an early version of UI that we planned before building the frontend.
+This is an early version of UI that we planned before building the frontend.
+
+See the `UI_mockup.fig` under the root directory. 
 
 [Online vewing](https://www.figma.com/file/sKnTrhQ3f2uaiexQ0A8OSJ/CMPUT-404-Project?node-id=6%3A272)
 
 ### UI Story Board
 
-This is a story board of the final version of UI. If the picture is too small to see, please open it in another tab and zoom in.
+This is a story board of the final version of UI. 
+
+If the picture is too small to see, please open it in another tab and zoom in.
 
 ![UI story board](UI_story_board.jpeg)
