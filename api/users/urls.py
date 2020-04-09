@@ -11,8 +11,8 @@ router.register(r'author', UserViewSet, basename="user")
 urlpatterns = [
     url(r'^', include(router.urls)),
     #url(r'^current', UserViewSet.as_view({"get": "current_author"})),
-    url(r'^login', LogInAPIView.as_view()),
+    url(r'^login', LogInAPIView.as_view(), name="login"),
     url(r'^logout/', knox_view.LogoutView.as_view(), name="knox_logout"),
-    url(r'^currentuser/', CurrentAPIView.as_view()),
-    url(r'^account/', include('allauth.urls')),
+    url(r'^currentuser/', CurrentAPIView.as_view(), name="current_user"),
+    url(r'^account/', include('allauth.urls'), name="account"),
 ]
