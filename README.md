@@ -20,6 +20,7 @@ Welcome to the git repository of Hindle's Wonderland. This is a repository of CM
 [http://boiling-bayou-18990.herokuapp.com/](http://boiling-bayou-18990.herokuapp.com/)
 
 **Note:** Currently, this frontend cannot run under HTTPS protocol, please use HTTP to connect.
+**Note:** The APIFetcher folder contains Ajax.
 
 ### Backend (Django API endpoint)
 
